@@ -1,0 +1,6 @@
+---
+modules_version: "4.6.0"
+modules_temp_path: "/tmp/modules"
+modules_fname: "modules-{{modules_version}}.tar.gz"
+modules_src_path: "{{modules_temp_path}}/modules-{{modules_version}}/"
+modules_url: "https://megalink.dl.sourceforge.net/project/modules/Modules/modules-{{modules_version}}/{{modules_fname}}"

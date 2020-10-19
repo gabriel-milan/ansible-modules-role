@@ -1,0 +1,48 @@
+---
+- name: Install dependencies for Environment Modules
+  apt:
+    name: tcl,tcl-dev,grep,autoconf,automake,autopoint,python
+    state: latest
+
+- name: Create temporary directory for Environment Modules files
+  file:
+    path: "{{ modules_temp_path }}/"
+    state: directory
+    mode: "0755"
+
+- name: Download Environment Modules
+  get_url:
+    url: "{{ modules_url }}"
+    dest: "{{ modules_temp_path }}/"
+
+- name: Unpack Environment Modules
+  unarchive:
+    src: "{{ modules_temp_path }}/{{ modules_fname }}"
+    dest: "{{ modules_temp_path }}/"
+    remote_src: yes
+    list_files: yes
+
+- name: Configure Environment Modules
+  command:
+    chdir: "{{ modules_src_path }}/"
+    cmd: "./configure"
+
+- name: Build Environment Modules
+  make:
+    chdir: "{{ modules_src_path }}/"
+
+- name: Install Environment Modules
+  make:
+    chdir: "{{ modules_src_path }}/"
+    target: install
+  become: true
+  become_user: root
+  become_method: sudo
+
+- name: Delete temporary files
+  file:
+    path: "{{ modules_temp_path }}"
+    state: absent
+
+- name: Ensure modules works
+  command: "module avail"
