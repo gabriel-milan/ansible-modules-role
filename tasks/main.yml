@@ -74,6 +74,3 @@
       . {{ modules_path }}/init/bash
     marker: "# {mark} ANSIBLE MANAGED BLOCK gabriel_milan.environment_modules"
   when: ansible_os_family == 'Debian'
-
-- name: Ensure modules works
-  command: "module avail"
