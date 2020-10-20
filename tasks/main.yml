@@ -44,5 +44,36 @@
     path: "{{ modules_temp_path }}"
     state: absent
 
+- name: Link /etc/profile.d/modules.sh
+  become: true
+  become_user: root
+  become_method: sudo
+  file:
+    src: "{{ modules_path }}/init/profile.sh"
+    dest: "/etc/profile.d/modules.sh"
+    state: link
+
+- name: Link /etc/profile.d/modules.csh
+  become: true
+  become_user: root
+  become_method: sudo
+  file:
+    src: "{{ modules_path }}/init/profile.csh"
+    dest: "/etc/profile.d/modules.csh"
+    state: link
+
+- name: source bash init script in /etc/bash.bashrc (Debian-based distros)
+  become: true
+  become_user: root
+  become_method: sudo
+  blockinfile:
+    path: "/etc/bash.bashrc"
+    state: present
+    block: |
+      # Initialize environment modules
+      . {{ modules_path }}/init/bash
+    marker: "# {mark} ANSIBLE MANAGED BLOCK gabriel_milan.environment_modules"
+  when: ansible_os_family == 'Debian'
+
 - name: Ensure modules works
   command: "module avail"
